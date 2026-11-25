@@ -1,0 +1,41 @@
+.demo-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 42px;
+  padding: 0 20px;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--nav-surface);
+  border-bottom: 1px solid var(--line);
+}
+.demo-note { color: var(--muted); }
+.demo-roles { display: flex; gap: 5px; }
+.demo-roles [aria-pressed="true"] { color: white; background: #2453c7; border-color: #2453c7; }
+.demo-bar > a { margin-left: auto; color: var(--ink); text-underline-offset: 3px; }
+[data-demo] .workspace { height: calc(100dvh - 98px); }
+
+[data-demo] #logout-btn,
+[data-demo] .nav-link[data-view="classroom"],
+[data-demo] .nav-link[data-view="vod"],
+[data-demo] .nav-link[data-view="assistant"],
+[data-demo] [data-go="vod"],
+[data-demo] [data-go="classroom"],
+[data-demo] [data-enter-live],
+[data-demo] #detail-verify-recording,
+[data-demo] #hw-create-btn,
+[data-demo] #hw-edit-btn,
+[data-demo] #hw-del-btn,
+[data-demo] #outline-add-homework,
+[data-demo] #qa-upload-btn,
+[data-demo] #qa-file-input { display: none !important; }
+[data-demo] #current-user-pill { pointer-events: none; }
+
+@media (max-width: 768px) {
+  .demo-bar { padding: 0 10px; gap: 8px; }
+  .demo-note { display: none; }
+  [data-demo] .workspace { height: calc(100dvh - 94px); }
+  [data-demo] .workspace.is-qa-view { height: calc(var(--vv-height, 100dvh) - 94px); }
+  [data-demo] .sidebar-slot { top: 94px; }
+  [data-demo] .mobile-nav-backdrop { inset-block-start: 94px; }
+}

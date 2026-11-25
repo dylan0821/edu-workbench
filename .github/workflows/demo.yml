@@ -1,0 +1,47 @@
+name: 发布在线演示
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/demo.yml'
+      - 'demo/**'
+      - 'index.html'
+      - 'public/**'
+      - 'src/db.js'
+      - 'src/schedule.js'
+  workflow_dispatch:
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - run: node demo/build.mjs .demo-site
+        env:
+          TZ: Asia/Shanghai
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: .demo-site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
