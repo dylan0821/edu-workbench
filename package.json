@@ -1,0 +1,18 @@
+{
+  "name": "teaching-workbench",
+  "version": "0.2.0",
+  "license": "AGPL-3.0-only",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "data": "node src/data-dir.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh": "^0.2.2-rc.5"
+  }
+}

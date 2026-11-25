@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f7fa">
+  <title>教培工作台</title>
+  <link rel="icon" type="image/jpeg" href="/public/logo.jpg">
+  <link rel="stylesheet" href="/public/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="/public/styles/app.css?v=20261124l">
+</head>
+<body>
+  <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 10a8 8 0 0 0-14-5L3 8m0-5v5h5M4 14a8 8 0 0 0 14 5l3-3m0 5v-5h-5"/></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+      <symbol id="i-live" viewBox="0 0 24 24"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="m17 10 4-2.5v9L17 14"/></symbol>
+      <symbol id="i-vod" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m10 8.5 6 3.5-6 3.5z"/></symbol>
+      <symbol id="i-qa" viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L4 20l1.1-4.2A8.5 8.5 0 1 1 21 11.5z"/></symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 20a5 5 0 0 1 5-4"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v18H6.5A2.5 2.5 0 0 1 4 18.5z"/><path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20"/></symbol>
+      <symbol id="i-homework" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></symbol>
+      <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+      <symbol id="i-assistant" viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- 未登录界面 -->
+  <div id="auth-screen" class="auth-screen" hidden>
+    <div class="auth-card">
+      <div class="auth-brand">
+        <span class="brand-mark has-logo" id="auth-brand-mark"><img src="/public/logo.jpg" alt="教培工作台"></span>
+        <span id="auth-org-name">教培工作台</span>
+      </div>
+      <div id="auth-error" class="message-bar is-error" style="margin-bottom:14px" hidden></div>
+
+      <section id="setup-panel" hidden>
+        <h1>创建管理员账号</h1>
+        <p>首次使用，请先设置教师或教务管理员账号。</p>
+        <form id="setup-form">
+          <label class="form-field"><span>姓名 *</span><input name="name" placeholder="如：董老师" required></label>
+          <label class="form-field"><span>任教科目</span><input name="subject" placeholder="如：高中数学"></label>
+          <label class="form-field"><span>手机号 *</span><input name="username" type="tel" inputmode="numeric" maxlength="11" pattern="1[0-9]{10}" title="请输入 11 位有效手机号" placeholder="11 位手机号" required autocomplete="username"></label>
+          <label class="form-field"><span>密码 *</span><div class="pw-field-wrap"><input name="password" type="password" minlength="4" placeholder="至少 4 位" required autocomplete="new-password"><button type="button" class="pw-toggle-btn" data-toggle-pw>显示</button></div></label>
+          <button type="submit" class="primary-button" style="width:100%;margin-top:4px">创建并进入</button>
+        </form>
+      </section>
+
+      <section id="login-panel" hidden>
+        <h1>账号登录</h1>
+        <p>请使用教师或学生账号登录。</p>
+        <form id="login-form">
+          <label class="form-field"><span>手机号 / 登录账号</span><input name="username" type="text" minlength="4" maxlength="32" pattern="[A-Za-z0-9_-]{4,32}" title="请输入 11 位手机号或 4–32 位登录账号" placeholder="11 位手机号或登录账号" required autocomplete="username"></label>
+          <label class="form-field"><span>密码</span><div class="pw-field-wrap"><input name="password" type="password" required autocomplete="current-password"><button type="button" class="pw-toggle-btn" data-toggle-pw>显示</button></div></label>
+          <button type="submit" class="primary-button" style="width:100%;margin-top:4px">登录</button>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <!-- 主界面 -->
+  <div id="app-shell" hidden>
+    <header class="topbar">
+      <button id="sidebar-toggle" type="button" class="icon-button" aria-label="切换侧边栏" title="收起/展开侧边栏">
+        <svg class="icon icon-lg"><use href="#i-menu"/></svg>
+      </button>
+      <a class="brand" href="#overview" id="brand-home">
+        <span class="brand-mark has-logo" id="top-brand-mark"><img src="/public/logo.jpg" alt="教培工作台"></span>
+        <span id="org-brand-name">教培工作台</span>
+      </a>
+      <div class="search-box" id="global-search-box">
+        <svg class="icon"><use href="#i-search"/></svg>
+        <input id="global-search-input" type="search" placeholder="搜索课程、课次、学生、资料…" autocomplete="off">
+        <kbd>⌘K</kbd>
+        <div id="global-search-suggestions" class="search-suggestions" hidden></div>
+      </div>
+      <div class="top-actions">
+        <select id="theme-select" class="theme-select" aria-label="外观">
+          <option value="system">跟随系统</option>
+          <option value="light">浅色</option>
+          <option value="dark">深色</option>
+        </select>
+        <button type="button" id="current-user-pill" class="account-pill" title="点击修改个人资料与密码" style="cursor:pointer"></button>
+        <button id="refresh-btn" type="button" class="icon-button" title="刷新" aria-label="刷新">
+          <svg class="icon"><use href="#i-refresh"/></svg>
+        </button>
+        <button id="logout-btn" type="button" class="text-button">退出</button>
+      </div>
+    </header>
+
+    <div id="workspace" class="workspace">
+      <div class="sidebar-slot">
+        <aside class="sidebar" aria-label="导航">
+          <div class="nav-group">
+            <p class="nav-section-label staff-only">教学</p>
+            <nav class="nav-list">
+              <button type="button" class="nav-link active" data-view="overview">
+                <span class="nav-link-main"><svg class="icon"><use href="#i-home"/></svg><span>总览</span></span>
+              </button>
+              <button type="button" class="nav-link" data-view="classroom">
+                <span class="nav-link-main"><svg class="icon"><use href="#i-live"/></svg><span>实时课堂</span></span>
+                <span class="nav-live-dot" id="nav-live-dot" hidden title="当前有课程正在上课"></span>
+              </button>
+              <button type="button" class="nav-link student-only" data-view="schedule">
+                <span class="nav-link-main"><svg class="icon"><use href="#i-calendar"/></svg><span>课表</span></span>
+                <span class="nav-count" id="nav-count-stu-lessons">0</span>
+              </button>
+              <button type="button" class="nav-link student-only" data-view="homework">
+                <span class="nav-link-main"><svg class="icon"><use href="#i-homework"/></svg><span>作业</span></span>
+                <span class="nav-count" id="nav-count-stu-homework">0</span>
+              </button>
+              <button type="button" class="nav-link staff-only" data-view="vod">
+                <span class="nav-link-main"><svg class="icon"><use href="#i-vod"/></svg><span>录播回放</span></span>
+                <span class="nav-count" id="nav-count-vod">0</span>
+              </button>
+              <button type="button" class="nav-link" data-view="qa">
+                <span class="nav-link-main"><svg class="icon"><use href="#i-qa"/></svg><span>课程群</span></span>
+                <span class="nav-count" id="nav-count-qa">0</span>
+              </button>
+            </nav>
+          </div>
+
+          <div class="nav-group student-only">
+            <p class="nav-section-label">我的课程</p>
+            <nav class="nav-list" id="student-course-nav-list"></nav>
+          </div>
+
+          <div class="nav-group staff-only">
+            <p class="nav-section-label">教务</p>
+            <nav class="nav-list">
+              <button type="button" class="nav-link nav-parent is-open" id="nav-courses-toggle" aria-expanded="true">
+                <span class="nav-link-main"><svg class="icon"><use href="#i-book"/></svg><span id="nav-label-courses">课程管理</span></span>
+                <svg class="icon nav-chevron"><use href="#i-chevron"/></svg>
+              </button>
+              <div class="nav-submenu" id="nav-courses-submenu">
+                <button type="button" class="nav-sublink" data-view="schedule">
+                  <span id="nav-label-schedule">课表排课</span>
+                  <span class="nav-count" id="nav-count-lessons">0</span>
+                </button>
+                <button type="button" class="nav-sublink staff-only" data-view="materials">
+                  <span>课程资料</span>
+                  <span class="nav-count" id="nav-count-materials">0</span>
+                </button>
+                <button type="button" class="nav-sublink" data-view="catalog">
+                  <span id="nav-label-catalog">课程列表</span>
+                  <span class="nav-count" id="nav-count-courses">0</span>
+                </button>
+                <button type="button" class="nav-sublink" data-view="homework">
+                  <span>作业列表</span>
+                  <span class="nav-count" id="nav-count-homework">0</span>
+                </button>
+              </div>
+              <button type="button" class="nav-link nav-parent teacher-only is-open" id="nav-accounts-toggle" aria-expanded="true">
+                <span class="nav-link-main"><svg class="icon"><use href="#i-users"/></svg><span>账号管理</span></span>
+                <svg class="icon nav-chevron"><use href="#i-chevron"/></svg>
+              </button>
+              <div class="nav-submenu teacher-only" id="nav-accounts-submenu">
+                <button type="button" class="nav-sublink" data-view="students">
+                  <span>学生管理</span>
+                  <span class="nav-count" id="nav-count-students">0</span>
+                </button>
+                <button type="button" class="nav-sublink" data-view="teachers">
+                  <span>教师管理</span>
+                  <span class="nav-count" id="nav-count-teachers">0</span>
+                </button>
+                <button type="button" class="nav-sublink" data-view="accounts">
+                  <span>账号列表</span>
+                  <span class="nav-count" id="nav-count-accounts">0</span>
+                </button>
+              </div>
+              <button type="button" class="nav-link teacher-only" data-view="assistant">
+                <span class="nav-link-main"><svg class="icon"><use href="#i-assistant"/></svg><span>智能助手</span></span>
+              </button>
+            </nav>
+          </div>
+
+          <div class="nav-group teacher-only">
+            <p class="nav-section-label">设置</p>
+            <nav class="nav-list">
+              <button type="button" class="nav-link nav-parent is-open" id="nav-settings-toggle" aria-expanded="true">
+                <span class="nav-link-main"><svg class="icon"><use href="#i-settings"/></svg><span>系统设置</span></span>
+                <svg class="icon nav-chevron"><use href="#i-chevron"/></svg>
+              </button>
+              <div class="nav-submenu" id="nav-settings-submenu">
+                <button type="button" class="nav-sublink" data-view="settings-org">
+                  <span>机构与课堂</span>
+                </button>
+                <button type="button" class="nav-sublink" data-view="settings-defaults">
+                  <span>教学参数</span>
+                </button>
+                <button type="button" class="nav-sublink" data-view="settings-data">
+                  <span>数据与备份</span>
+                </button>
+                <button type="button" class="nav-sublink" data-view="settings-ai">
+                  <span>智能助手</span>
+                </button>
+              </div>
+            </nav>
+          </div>
+
+        </aside>
+      </div>
+      <div id="mobile-nav-backdrop" class="mobile-nav-backdrop"></div>
+
+      <div class="main-content">
+        <main id="page-shell" class="page-shell"></main>
+      </div>
+    </div>
+  </div>
+
+  <div id="remote-audio-container" hidden></div>
+
+  <dialog id="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">详情</h2>
+      <button id="modal-close" type="button" class="icon-button" aria-label="关闭">
+        <svg class="icon"><use href="#i-close"/></svg>
+      </button>
+    </div>
+    <div id="modal-body" class="modal-body"></div>
+  </dialog>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+
+  <script src="/public/vendor/katex/katex.min.js"></script>
+  <script type="module" src="/public/js/app.js?v=20261124l"></script>
+</body>
+</html>
