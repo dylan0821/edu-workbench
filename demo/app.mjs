@@ -1,5 +1,7 @@
+import { findScheduleConflicts } from './schedule.mjs';
+
 const { roles, anchor, members } = await (await fetch('./demo/sample.json')).json();
-const { teacher, student } = roles;
+const { admin, teacher, student } = roles;
 const course = teacher.courses[0];
 const uploads = new Map();
 let role = 'teacher';
@@ -7,22 +9,23 @@ const today = new Date().setHours(18, 30, 0, 0);
 const offset = today - anchor;
 for (const snapshot of Object.values(roles)) {
   snapshot.dataInstance = 'pages-demo';
-  for (const lesson of snapshot.lessons) {
-    lesson.start_ms += offset;
-    lesson.end_ms += offset;
-  }
+}
+const lessons = admin.lessons;
+for (const lesson of lessons) {
+  lesson.start_ms += offset;
+  lesson.end_ms += offset;
 }
 
 const submissions = teacher.homeworkSubmissions;
 const homeworks = teacher.homeworks;
 const posts = teacher.qaPosts;
 const replies = teacher.qaReplies;
-const cursors = { teacher: {}, student: {} };
+const cursors = { admin: {}, teacher: {}, student: {} };
 const now = () => new Date().toISOString();
 
 function snapshot() {
-  const visibleSubmissions = role === 'teacher' ? submissions : submissions.filter(s => s.student_id === student.currentUser.linkedId);
-  return { ...roles[role], homeworks, homeworkSubmissions: visibleSubmissions,
+  const visibleSubmissions = role === 'student' ? submissions.filter(s => s.student_id === student.currentUser.linkedId) : submissions;
+  return { ...roles[role], lessons, homeworks, homeworkSubmissions: visibleSubmissions,
     qaPosts: posts, qaReplies: replies, qaReadCursors: cursors[role] };
 }
 
@@ -47,6 +50,36 @@ window.workbenchDemoUpload = async (url, file, onProgress) => {
 const browserFetch = window.fetch.bind(window);
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 const unavailable = () => json({ error: '此操作请在自行部署的完整版中使用。' }, 405);
+
+function saveDemoLesson(body, id) {
+  const assignedTeacher = admin.teachers.find(item => item.id === body.teacherId);
+  if (!assignedTeacher || body.courseId !== course.id || !body.title?.trim()) {
+    return json({ error: '请填写课次名称、课程和授课教师。' }, 400);
+  }
+  if (!Number.isSafeInteger(body.startMs) || !Number.isSafeInteger(body.endMs) || body.endMs <= body.startMs) {
+    return json({ error: '结束时间必须晚于开始时间。' }, 400);
+  }
+  const previous = id && lessons.find(item => item.id === id);
+  if (id && !previous) return json({ error: '课次不存在。' }, 404);
+  const lesson = { id: id || crypto.randomUUID(), org_id: course.org_id, title: body.title.trim(),
+    course_id: course.id, course_name: course.name, teacher_id: assignedTeacher.id, teacher_name: assignedTeacher.name,
+    start_ms: body.startMs, end_ms: body.endMs, physical_room: body.physicalRoom?.trim() || null,
+    external_room_url: '', status: body.status || 'scheduled', note: body.note || '' };
+  const studentIds = admin.enrollments.filter(item => item.course_id === course.id && item.status === 'active').map(item => item.student_id);
+  const forConflictCheck = item => ({ orgId: item.org_id, id: item.id, teacherId: item.teacher_id,
+    start: item.start_ms, end: item.end_ms, physicalRoomId: item.physical_room, studentIds });
+  const conflicts = lesson.status === 'cancelled' ? [] : findScheduleConflicts(forConflictCheck(lesson),
+    lessons.filter(item => item.status !== 'cancelled').map(forConflictCheck));
+  if (conflicts.length) {
+    const title = lessons.find(item => item.id === conflicts[0].lessonId).title;
+    return json({ error: `排课时间冲突，和「${title}」重叠。` }, 409);
+  }
+  if (previous) Object.assign(previous, lesson);
+  else lessons.push(lesson);
+  lessons.sort((a, b) => a.start_ms - b.start_ms);
+  return previous ? json(snapshot()) : json({ id: lesson.id, state: snapshot() }, 201);
+}
+
 window.fetch = async (resource, options = {}) => {
   if (typeof resource !== 'string' || !resource.startsWith('/api/')) return browserFetch(resource, options);
   const url = new URL(resource, location.href);
@@ -58,6 +91,19 @@ window.fetch = async (resource, options = {}) => {
     if (endpoint === '/api/qa/members') return json(members);
     if (endpoint === '/api/qa/messages') return json({ posts, replies, hasMore: false });
     return unavailable();
+  }
+  if (role === 'admin') {
+    const account = method === 'PUT' && endpoint.match(/^\/api\/accounts\/([^/]+)$/);
+    if (account && typeof body.disabled === 'boolean') {
+      const target = admin.accounts.find(item => item.id === account[1] && item.role !== 'admin');
+      if (target) {
+        target.disabled = Number(body.disabled);
+        return json(snapshot());
+      }
+    }
+    if (method === 'POST' && endpoint === '/api/lessons') return saveDemoLesson(body);
+    const lesson = method === 'PUT' && endpoint.match(/^\/api\/lessons\/([^/]+)$/);
+    if (lesson) return saveDemoLesson(body, lesson[1]);
   }
   if (endpoint === '/api/qa/read') {
     cursors[role][body.courseId] = body.lastReadMs;
@@ -85,11 +131,11 @@ window.fetch = async (resource, options = {}) => {
     return json({ post });
   }
   const grading = endpoint.match(/^\/api\/homework-submissions\/([^/]+)\/grade$/);
-  if (grading && role === 'teacher') {
+  if (grading && role !== 'student') {
     const submission = submissions.find(item => item.id === grading[1]);
     if (!submission) return json({ error: '提交记录不存在' }, 404);
     Object.assign(submission, { status: 'graded', score: body.score, feedback: body.feedback,
-      gradedImages: body.gradedImages, graded_by: teacher.currentUser.name, graded_at: now() });
+      gradedImages: body.gradedImages, graded_by: roles[role].currentUser.name, graded_at: now() });
     return json({ submission, snapshot: snapshot() });
   }
   const submitting = endpoint.match(/^\/api\/homeworks\/([^/]+)\/submit$/);
@@ -112,10 +158,13 @@ await import('../public/js/app.js');
 const roleButtons = document.querySelectorAll('[data-demo-role]');
 for (const button of roleButtons) {
   button.addEventListener('click', async () => {
+    if (role === button.dataset.demoRole) return;
     role = button.dataset.demoRole;
     for (const item of roleButtons) item.setAttribute('aria-pressed', String(item === button));
     document.querySelector('#modal').close();
     app.hwActiveId = '';
+    app.showCreatePanel = false;
+    app.editingLessonId = null;
     await loadState();
   });
 }

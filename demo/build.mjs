@@ -1,4 +1,5 @@
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { openWorkbenchDb } from '../src/db.js';
@@ -11,11 +12,13 @@ await mkdir(path.join(output, 'demo'));
 for (const file of ['app.mjs', 'styles.css', 'solution.png']) {
   await cp(path.join(root, 'demo', file), path.join(output, 'demo', file));
 }
+await cp(path.join(root, 'src/schedule.js'), path.join(output, 'demo/schedule.mjs'));
 
 const index = await readFile(path.join(root, 'index.html'), 'utf8');
 const banner = `<aside class="demo-bar" aria-label="在线演示">
       <strong>在线演示</strong><span class="demo-note">虚构数据 · 刷新重置</span>
       <div class="demo-roles" role="group" aria-label="切换视角">
+        <button class="secondary-button btn-sm" data-demo-role="admin" aria-pressed="false">管理员视角</button>
         <button class="secondary-button btn-sm" data-demo-role="teacher" aria-pressed="true">教师视角</button>
         <button class="secondary-button btn-sm" data-demo-role="student" aria-pressed="false">学生视角</button>
       </div>
@@ -45,13 +48,17 @@ const store = openWorkbenchDb(':memory:');
 const anchor = new Date();
 anchor.setHours(18, 30, 0, 0);
 const day = 86_400_000;
+const admin = '许教务';
 const teacher = '周老师';
 const student = '小禾';
+const adminId = store.createTeacher({ name: admin, phone: '10000000001' });
 const teacherId = store.createTeacher({ name: teacher, subject: '高中数学', phone: '10000000000' });
 const courseId = store.createCourse({ name: '高中数学 · 导数小班', subject: '数学', mode: '直播课', teacherId, capacity: 8,
   description: '从导数符号判断单调性，再用单调性处理最值问题。' });
-const studentId = store.createStudent({ name: student, grade: '高二', courseIds: [courseId] });
-store.createStudent({ name: '小满', grade: '高二', courseIds: [courseId] });
+const studentId = store.createStudent({ name: student, grade: '高二', status: '在读', courseIds: [courseId] });
+const otherStudentId = store.createStudent({ name: '小满', grade: '高二', status: '在读', courseIds: [courseId] });
+store.addStudentFollowup({ studentId, content: '已完成第一讲。下节课前复习导数的符号表。' });
+store.createAccount({ role: 'student', name: '小满', linkedId: otherStudentId, username: 'demo-xiaoman', password: randomUUID() });
 const unit = store.createCourseNode({ courseId, nodeType: 'folder', title: '第一单元 · 导数与单调性' });
 store.createCourseNode({ courseId, parentId: unit, nodeType: 'note', title: '课前阅读',
   content: '先找定义域，再按导数的零点分区间判断符号。' });
@@ -72,8 +79,12 @@ store.createQaPost({ courseId, authorName: teacher, authorRole: 'teacher', autho
 store.createQaPost({ courseId, authorName: student, authorRole: 'student', authorId: studentId,
   msgType: 'question', refTag: '第 2 题', content: '老师，导数在 $x=1$ 处等于零，可以把它写进单调区间吗？' });
 
-const roles = Object.fromEntries(Object.entries({ teacher: [teacher, teacherId], student: [student, studentId] })
-  .map(([role, [name, linkedId]]) => [role, store.getSnapshotForUser({ role, name, linkedId,
-    accountId: `demo-${role}`, username: `demo-${role}` })]));
+const sessions = Object.entries({ admin: [admin, adminId], teacher: [teacher, teacherId], student: [student, studentId] })
+  .map(([role, [name, linkedId]]) => {
+    const username = `demo-${role}`;
+    const accountId = store.createAccount({ role, name, linkedId, username, password: randomUUID() });
+    return { role, name, linkedId, accountId, username };
+  });
+const roles = Object.fromEntries(sessions.map(session => [session.role, store.getSnapshotForUser(session)]));
 await writeFile(path.join(output, 'demo/sample.json'), JSON.stringify({ roles, anchor: Number(anchor), members: store.getCourseMembers(courseId) }));
 store.db.close();

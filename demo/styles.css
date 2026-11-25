@@ -22,7 +22,35 @@
 [data-demo] [data-go="vod"],
 [data-demo] [data-go="classroom"],
 [data-demo] [data-enter-live],
+[data-demo] [data-go-live],
+[data-demo] [data-outline-go-live],
+[data-demo] [data-quick-complete-les],
+[data-demo] #detail-enter-live,
 [data-demo] #detail-verify-recording,
+[data-demo] [data-det-status],
+[data-demo] #det-note-form,
+[data-demo] #det-mat-upload-form,
+[data-demo] .nav-group:has(#nav-settings-toggle),
+[data-demo] #batch-import-stu-btn,
+[data-demo] #toggle-stu-create,
+[data-demo] #toggle-tch-create,
+[data-demo] [data-del-stu],
+[data-demo] [data-edit-tch],
+[data-demo] [data-acc-tch],
+[data-demo] [data-del-tch],
+[data-demo] [data-reset-acc],
+[data-demo] [data-del-acc],
+[data-demo] #self-change-pw-btn,
+[data-demo] #edit-stu-form .form-actions,
+[data-demo] #stu-account-form,
+[data-demo] #stu-followup-form,
+[data-demo] #stu-trial-form,
+[data-demo] #toggle-course-create,
+[data-demo] [data-edit-course],
+[data-demo] [data-del-course],
+[data-demo] #toggle-batch-panel,
+[data-demo] [data-del-les],
+[data-demo] #lesson-form label:has(input[name="externalRoomUrl"]),
 [data-demo] #hw-create-btn,
 [data-demo] #hw-edit-btn,
 [data-demo] #hw-del-btn,
@@ -38,4 +66,8 @@
   [data-demo] .workspace.is-qa-view { height: calc(var(--vv-height, 100dvh) - 94px); }
   [data-demo] .sidebar-slot { top: 94px; }
   [data-demo] .mobile-nav-backdrop { inset-block-start: 94px; }
+}
+
+@media (max-width: 420px) {
+  .demo-bar > a { display: none; }
 }
